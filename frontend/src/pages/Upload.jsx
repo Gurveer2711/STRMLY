@@ -29,7 +29,7 @@ export default function Upload() {
       data.append("description", form.description);
       data.append("video", file);
 
-      const response = await axios.post("/videos/upload", data);
+      const response = await axios.post("/video/upload", data);
 
       setMessage("Video uploaded successfully!");
       setForm({ title: "", description: "" });
