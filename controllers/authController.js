@@ -35,7 +35,14 @@ export const signUp = asyncHandler(async (req, res) => {
 });
 
 export const login = asyncHandler(async (req, res) => {
-  
+  let token = req.cookies.token;
+  if (token) {
+    res.clearCookie("token", {
+      httpOnly: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+    });
+  }
 
   const { email, password } = req.body;
   if (!email || !password) {
@@ -52,7 +59,7 @@ export const login = asyncHandler(async (req, res) => {
     return res.status(401).json({ error: "Invalid email or password" });
   }
 
-  const token = jwt.sign(
+   token = jwt.sign(
     { id: user._id, email: user.email },
     process.env.JWT_SECRET,
     {
