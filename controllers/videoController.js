@@ -1,6 +1,6 @@
 import express from "express";
 import asyncHandler from "express-async-handler";
-import Video from "../models/Video.js";
+import Video from "../models/videoModel.js";
 
 
 export const uploadVideo = asyncHandler(async (req, res) => {

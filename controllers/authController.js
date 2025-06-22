@@ -1,15 +1,10 @@
 import asyncHandler from "express-async-handler";
 import jwt from "jsonwebtoken";
-import User from "../models/user";
+import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 
 export const signUp = asyncHandler(async (req, res) => {
-  const token = req.cookies.token;
-  if (token) {
-    return res
-      .status(200)
-      .json({ message: "User is already logged in.Please logout first" });
-  }
+
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
     res.status(400);
@@ -19,7 +14,7 @@ export const signUp = asyncHandler(async (req, res) => {
   const userExists = await User.findOne({ email });
   if (userExists) {
     res.status(400);
-    throw new Error("User already exists");
+    throw new Error("User already exists.Please log in");
   }
 
   const user = new User({
@@ -40,12 +35,7 @@ export const signUp = asyncHandler(async (req, res) => {
 });
 
 export const login = asyncHandler(async (req, res) => {
-  let token = req.cookies.token;
-  if (token) {
-    return res
-      .status(200)
-      .json({ message: "User is already logged in.Please logout first." });
-  }
+  
 
   const { email, password } = req.body;
   if (!email || !password) {
@@ -62,7 +52,7 @@ export const login = asyncHandler(async (req, res) => {
     return res.status(401).json({ error: "Invalid email or password" });
   }
 
-  token = jwt.sign(
+  const token = jwt.sign(
     { id: user._id, email: user.email },
     process.env.JWT_SECRET,
     {
